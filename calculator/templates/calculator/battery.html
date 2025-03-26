@@ -1,0 +1,110 @@
+{% extends "calculator/base.html" %}
+
+{% block title %}Battery Sizing Calculator{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="calculator-card p-4 p-md-5 mb-4">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold mb-3"><i class="fa-solid fa-car-battery me-2"></i>Battery Bank Calculator</h2>
+            <p class="text-muted">Determine the optimal battery capacity for your energy needs</p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation me-2"></i>
+                Please correct the errors below
+            </div>
+            {% endif %}
+
+            <div class="row g-4">
+                <!-- Daily Energy Input -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="id_daily_energy" name="daily_energy" 
+                               step="0.1" min="0.1" required placeholder="Enter daily energy consumption">
+                        <label for="id_daily_energy">Daily Energy Consumption (kWh)</label>
+                    </div>
+                    <small class="text-muted">Typical household: 10-30 kWh/day</small>
+                </div>
+
+                <!-- Days of Autonomy -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="id_days_autonomy" name="days_autonomy"
+                               step="1" min="1" required placeholder="Enter days of autonomy">
+                        <label for="id_days_autonomy">Days of Autonomy</label>
+                    </div>
+                    <small class="text-muted">Backup days required</small>
+                </div>
+
+                <!-- System Voltage -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="id_system_voltage" name="system_voltage"
+                               step="1" min="12" required placeholder="Enter system voltage">
+                        <label for="id_system_voltage">System Voltage (V)</label>
+                    </div>
+                    <small class="text-muted">Common: 12V, 24V, 48V</small>
+                </div>
+
+                <!-- Depth of Discharge -->
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="number" class="form-control" id="id_depth_discharge" name="depth_discharge"
+                               step="0.01" min="0.1" max="1.0" required placeholder="Enter depth of discharge">
+                        <label for="id_depth_discharge">Depth of Discharge (0.1-1.0)</label>
+                    </div>
+                    <small class="text-muted">Recommended: 0.5-0.8</small>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fa-solid fa-bolt me-2"></i>Calculate Capacity
+                </button>
+            </div>
+        </form>
+
+        {% if result %}
+        <div class="result-card mt-5 p-4">
+            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-chart-pie me-2"></i>Calculation Results</h4>
+            
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="bg-light p-4 rounded text-center">
+                        <h5 class="text-secondary mb-3">Required Battery Capacity</h5>
+                        <div class="display-4 fw-bold text-primary">
+                            {{ result|floatformat:2 }} <small class="fs-4">Ah</small>
+                        </div>
+                        <div class="mt-3">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     <!--style="width: {{ form.depth_discharge.value }}%"--> 
+                                     aria-valuenow="{{ form.depth_discharge.value }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="1">
+                                </div>
+                            </div>
+                            <small class="text-muted mt-2 d-block">
+                                Using {{ form.depth_discharge.value }} depth of discharge
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-muted">
+                <small>
+                    <i class="fa-solid fa-calculator me-2"></i>
+                    Formula: (Daily Energy × Days × 1000) ÷ (Voltage × Depth of Discharge)
+                </small>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
