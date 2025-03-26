@@ -1,11 +1,22 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-class BatteryForm(forms.Form):
-    daily_energy = forms.FloatField(label="Daily Energy Consumption (kWh)", min_value=0.1)
-    days_autonomy = forms.FloatField(label="Days of Autonomy", min_value=1)
-    system_voltage = forms.FloatField(label="System Voltage (V)", min_value=12)
-    depth_discharge = forms.FloatField(label="Depth of Discharge (0.1-1.0)", min_value=0.1, max_value=1.0)
+class ApplianceForm(forms.Form):
+    name = forms.CharField(max_length=100, required=False)
+    power = forms.FloatField(min_value=0, label="Power Rating (Watts)")
+    quantity = forms.IntegerField(min_value=1, initial=1)
+    hours = forms.FloatField(min_value=0, max_value=24, label="Daily Usage Hours")
+
+class BatteryCalcForm(forms.Form):
+    days_autonomy = forms.FloatField(label="Days of Autonomy", min_value=1, initial=3)
+    system_voltage = forms.FloatField(label="System Voltage (V)", min_value=12, initial=12)
+    depth_discharge = forms.FloatField(
+        label="Depth of Discharge",
+        min_value=0.1,
+        max_value=1.0,
+        initial=0.8,
+        widget=forms.NumberInput(attrs={'step': '0.1'})
+    )
 
 class SolarForm(forms.Form):
     daily_energy = forms.FloatField(

@@ -21,7 +21,7 @@ from calculator import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
-    path('battery/', views.battery_size, name='battery'),
+    path('battery/', views.battery, name='battery'),
     path('solar/', views.solar_size, name='solar'),
     path('generator/', views.generator_size, name='generator'),
 ]

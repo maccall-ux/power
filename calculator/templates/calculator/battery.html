@@ -1,110 +1,209 @@
+<!-- calculator/templates/calculator/battery.html -->
 {% extends "calculator/base.html" %}
 
-{% block title %}Battery Sizing Calculator{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-    <div class="calculator-card p-4 p-md-5 mb-4">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold mb-3"><i class="fa-solid fa-car-battery me-2"></i>Battery Bank Calculator</h2>
-            <p class="text-muted">Determine the optimal battery capacity for your energy needs</p>
-        </div>
-
-        <form method="post">
-            {% csrf_token %}
-            
-            {% if form.errors %}
-            <div class="alert alert-danger">
-                <i class="fa-solid fa-circle-exclamation me-2"></i>
-                Please correct the errors below
+<div class="calculator-card">
+    <h2 class="mb-4"><i class="fas fa-car-battery"></i> Battery Sizing Calculator</h2>
+    
+    <form method="post" id="battery-form">
+        {% csrf_token %}
+        <input type="hidden" name="appliance_count" id="appliance_count" value="{{ appliances|length }}">
+        
+        <!-- Appliances Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-plug"></i> Add Appliances</h5>
             </div>
-            {% endif %}
-
-            <div class="row g-4">
-                <!-- Daily Energy Input -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="id_daily_energy" name="daily_energy" 
-                               step="0.1" min="0.1" required placeholder="Enter daily energy consumption">
-                        <label for="id_daily_energy">Daily Energy Consumption (kWh)</label>
+            <div class="card-body">
+                <div id="appliances-container">
+                    {% for appliance in appliances %}
+                    <div class="appliance-row mb-3">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" 
+                                       name="appliance_{{ forloop.counter0 }}_name" 
+                                       placeholder="Appliance name"
+                                       value="{{ appliance.name }}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" 
+                                       name="appliance_{{ forloop.counter0 }}_power"
+                                       step="1" min="0" placeholder="Power (W)"
+                                       value="{{ appliance.power }}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" 
+                                       name="appliance_{{ forloop.counter0 }}_quantity"
+                                       min="1" value="{{ appliance.quantity }}">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" class="form-control" 
+                                       name="appliance_{{ forloop.counter0 }}_hours"
+                                       step="0.5" min="0" max="24" placeholder="Hours"
+                                       value="{{ appliance.hours }}">
+                            </div>
+                            <div class="col-md-3">
+                                <span class="form-control-plaintext">
+                                    {{ appliance.watt_hours|floatformat:0 }} Wh
+                                </span>
+                                <button type="button" class="btn btn-danger remove-appliance">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <small class="text-muted">Typical household: 10-30 kWh/day</small>
+                    {% endfor %}
                 </div>
-
-                <!-- Days of Autonomy -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="id_days_autonomy" name="days_autonomy"
-                               step="1" min="1" required placeholder="Enter days of autonomy">
-                        <label for="id_days_autonomy">Days of Autonomy</label>
-                    </div>
-                    <small class="text-muted">Backup days required</small>
-                </div>
-
-                <!-- System Voltage -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="id_system_voltage" name="system_voltage"
-                               step="1" min="12" required placeholder="Enter system voltage">
-                        <label for="id_system_voltage">System Voltage (V)</label>
-                    </div>
-                    <small class="text-muted">Common: 12V, 24V, 48V</small>
-                </div>
-
-                <!-- Depth of Discharge -->
-                <div class="col-md-6">
-                    <div class="form-floating">
-                        <input type="number" class="form-control" id="id_depth_discharge" name="depth_discharge"
-                               step="0.01" min="0.1" max="1.0" required placeholder="Enter depth of discharge">
-                        <label for="id_depth_discharge">Depth of Discharge (0.1-1.0)</label>
-                    </div>
-                    <small class="text-muted">Recommended: 0.5-0.8</small>
-                </div>
-            </div>
-
-            <div class="text-center mt-5">
-                <button type="submit" class="btn btn-primary btn-lg">
-                    <i class="fa-solid fa-bolt me-2"></i>Calculate Capacity
+                <button type="button" class="btn btn-secondary mt-3" id="add-appliance">
+                    <i class="fas fa-plus"></i> Add Appliance
                 </button>
             </div>
-        </form>
+        </div>
 
-        {% if result %}
-        <div class="result-card mt-5 p-4">
-            <h4 class="mb-4 fw-bold"><i class="fa-solid fa-chart-pie me-2"></i>Calculation Results</h4>
-            
-            <div class="row g-4">
-                <div class="col-12">
-                    <div class="bg-light p-4 rounded text-center">
-                        <h5 class="text-secondary mb-3">Required Battery Capacity</h5>
-                        <div class="display-4 fw-bold text-primary">
-                            {{ result|floatformat:2 }} <small class="fs-4">Ah</small>
+        <!-- Battery Parameters Section -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-calculator"></i> Battery Parameters</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Days of Autonomy:</label>
+                            <input type="number" class="form-control" 
+                                   name="days_autonomy" min="1" required
+                                   value="{{ battery_params.days_autonomy|default:'3' }}">
                         </div>
-                        <div class="mt-3">
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" 
-                                     <!--style="width: {{ form.depth_discharge.value }}%"--> 
-                                     aria-valuenow="{{ form.depth_discharge.value }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="1">
-                                </div>
-                            </div>
-                            <small class="text-muted mt-2 d-block">
-                                Using {{ form.depth_discharge.value }} depth of discharge
-                            </small>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>System Voltage (V):</label>
+                            <input type="number" class="form-control" 
+                                   name="system_voltage" min="12" step="12" required
+                                   value="{{ battery_params.system_voltage|default:'12' }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Depth of Discharge (%):</label>
+                            <input type="number" class="form-control" 
+                                   name="depth_discharge" min="10" max="100" step="5" required
+                                   value="{{ battery_params.depth_discharge|default:'80' }}">
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="mt-4 text-muted">
-                <small>
-                    <i class="fa-solid fa-calculator me-2"></i>
-                    Formula: (Daily Energy × Days × 1000) ÷ (Voltage × Depth of Discharge)
-                </small>
+        <!-- Results Section -->
+        {% if result %}
+        <div class="result-card mt-4">
+            <div class="alert alert-success">
+                <h4><i class="fas fa-chart-bar"></i> Calculation Results</h4>
+                <hr>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Total Daily Energy: {{ total_energy }} kWh</h5>
+                        <h5>Required Battery Capacity: {{ result }} Ah</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded">
+                            <strong>Calculation Details:</strong>
+                            <ul class="mt-2">
+                                <li>Total Watt-hours: {{ total_watt_hours|floatformat:0 }} Wh</li>
+                                <li>Days of Autonomy: {{ battery_params.days_autonomy }}</li>
+                                <li>System Voltage: {{ battery_params.system_voltage }}V</li>
+                                <li>Depth of Discharge: {{ battery_params.depth_discharge }}%</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {% endif %}
-    </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="fas fa-bolt"></i> Calculate Battery Size
+            </button>
+        </div>
+    </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let applianceCount = {{ appliances|length }};
+    const container = document.getElementById('appliances-container');
+    const countField = document.getElementById('appliance_count');
+    
+    function updateCount() {
+        countField.value = applianceCount;
+    }
+
+    document.getElementById('add-appliance').addEventListener('click', function() {
+        const newRow = document.createElement('div');
+        newRow.className = 'appliance-row mb-3';
+        newRow.innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" 
+                           name="appliance_${applianceCount}_name" 
+                           placeholder="Appliance name">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" 
+                           name="appliance_${applianceCount}_power"
+                           step="1" min="0" placeholder="Power (W)">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" 
+                           name="appliance_${applianceCount}_quantity"
+                           min="1" value="1">
+                </div>
+                <div class="col-md-2">
+                    <input type="number" class="form-control" 
+                           name="appliance_${applianceCount}_hours"
+                           step="0.5" min="0" max="24" placeholder="Hours">
+                </div>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-danger remove-appliance">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(newRow);
+        applianceCount++;
+        updateCount();
+    });
+
+    container.addEventListener('click', function(e) {
+        if(e.target.classList.contains('remove-appliance')) {
+            e.target.closest('.appliance-row').remove();
+            applianceCount--;
+            updateCount();
+        }
+    });
+});
+</script>
+
+<style>
+.appliance-row:not(:last-child) .remove-appliance {
+    display: none;
+}
+.result-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+}
+.calculator-card {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+</style>
 {% endblock %}
