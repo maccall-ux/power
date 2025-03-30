@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from .forms import ApplianceForm,BatteryCalcForm, SolarForm, GeneratorForm
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def home(request):
     return render(request, 'calculator/home.html')
 

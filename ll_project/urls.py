@@ -1,5 +1,5 @@
 """
-URL configuration for power_sizing project.
+URL configuration for ll_project project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -15,13 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from calculator import views
+from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    path('battery/', views.battery, name='battery'),
-    path('solar/', views.solar_size, name='solar'),
-    path('generator/', views.generator_size, name='generator'),
+    path('accounts/',include('accounts.urls')),
+    path('calculator/',include('calculator.urls')),
+    path('',include('learning_logs.urls')),
 ]

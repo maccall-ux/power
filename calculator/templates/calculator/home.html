@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container py-5">
     <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold mb-3">Power System Calculator</h1>
+        <h1 class="display-4 fw-bold mb-3">Power Sizing System</h1>
         <p class="lead text-muted">Smart solutions for your energy needs</p>
     </div>
 
@@ -15,7 +15,7 @@
                 </div>
                 <h3 class="mb-3">Battery Sizing</h3>
                 <p class="text-muted">Calculate optimal battery capacity for your energy requirements</p>
-                <a href="{% url 'battery' %}" class="btn btn-outline-primary">Calculate Now</a>
+                <a href="{% url 'calculator:battery' %}" class="btn btn-outline-primary">Calculate Now</a>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
                 </div>
                 <h3 class="mb-3">Solar Sizing</h3>
                 <p class="text-muted">Determine the ideal solar panel configuration for your needs</p>
-                <a href="{% url 'solar' %}" class="btn btn-outline-warning">Calculate Now</a>
+                <a href="{% url 'calculator:solar' %}" class="btn btn-outline-warning">Calculate Now</a>
             </div>
         </div>
 
@@ -37,7 +37,7 @@
                 </div>
                 <h3 class="mb-3">Generator Sizing</h3>
                 <p class="text-muted">Find the perfect generator size for your power backup needs</p>
-                <a href="{% url 'generator' %}" class="btn btn-outline-danger">Calculate Now</a>
+                <a href="{% url 'calculator:generator' %}" class="btn btn-outline-danger">Calculate Now</a>
             </div>
         </div>
     </div>

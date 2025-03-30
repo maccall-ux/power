@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +16,6 @@
         }
 
         body {
-            background: #f8f9fa;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -91,12 +92,15 @@
             display: inline-block;
         }
     </style>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/">
-                <i class="fa-bolt fa-solid"></i> PowerCalc
+            <a class="navbar-brand fw-bold" href="{% url 'learning_logs:index' %}">
+                Dashboard</a>
+            <a class="navbar-brand fw-bold" href="{% url "calculator:home" %}">
+                <i class="fa-bolt fa-solid"></i> Power sizing
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -104,17 +108,17 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'battery' %}">
+                        <a class="nav-link" href="{% url 'calculator:battery' %}">
                             <i class="fa-solid fa-car-battery"></i> Battery
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'solar' %}">
+                        <a class="nav-link" href="{% url 'calculator:solar' %}">
                             <i class="fa-solid fa-sun"></i> Solar
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'generator' %}">
+                        <a class="nav-link" href="{% url 'calculator:generator' %}">
                             <i class="fa-solid fa-industry"></i> Generator
                         </a>
                     </li>
@@ -129,8 +133,8 @@
 
     <footer class="bg-dark text-white py-4 mt-auto">
         <div class="container text-center">
-            <p class="mb-0">&copy; 2025 PowerCalc. All rights reserved.</p>
-            <p class="mb-0">@mwangipaul</p>
+            <p class="mb-0">&copy; 2025 Power sizing. All rights reserved.</p>
+            <p class="mb-0">mwangipaulmuraya@gmail.com</p>
         </div>
     </footer>
 
