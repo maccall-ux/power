@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme='dark' id='htmlpage'>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +10,10 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4 border">
+    <nav class="navbar navbar-expand-md mb-4 border">
         <div class="container-fluid">
            <a class="navbar-brand fw-bold" href="{% url 'learning_logs:index' %}">
               Learning Log</a>
@@ -55,7 +56,15 @@
           </div> <!-- Closes collapsible parts of navbar -->
         </div> <!-- Closes navbar's container -->
       </nav> <!-- End of navbar -->
-      
+      <div class="row justify-content-center mt-4">
+        <input type="checkbox" class="checkbox" id="checkbox">
+        <label for="checkbox" class='checkbox-label'>
+          <i class='fas fa-moon'></i>
+          <i class="fas fa-sun"></i>
+          <span class="ball"></span>
+        </label>
+      </div>
+
       <main class="container">
         <div class="pb-2 mb-2 border-bottom">
             {% block page_header %}{% endblock page_header %}
@@ -64,5 +73,7 @@
             {% block content %}{% endblock %}
         </div>
       </main>
+
+      <script src="{% static "js/app.js" %}"></script>
 </body>
 </html>
